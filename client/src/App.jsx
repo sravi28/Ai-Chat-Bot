@@ -1,27 +1,28 @@
-import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Chat from '@/components/chat';
-import Login from '@/components/login';
-import './App.css';
+import { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Chat from "@/components/chat";
+import Login from "@/components/login";
+import "./App.css";
+
 // Otp Imports
+import { BsFillShieldLockFill, BsTelephoneFill } from "react-icons/bs";
+import { CgSpinner } from "react-icons/cg";
+import OtpInput from "otp-input-react";
 
-import { BsFillShieldLockFill, BsTelephoneFill } from 'react-icons/bs';
-import { CgSpinner } from 'react-icons/cg';
-import OtpInput from 'otp-input-react';
-
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
-import { auth } from '@/firebase.config';
-import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
-import { toast, Toaster } from 'react-hot-toast';
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { auth } from "@/firebase.config";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { toast, Toaster } from "react-hot-toast";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("");
   const [secret, setSecret] = useState(null);
   const isAuth = Boolean(user) && Boolean(secret);
+
   // OTP Verifiaction
-  const [otp, setOtp] = useState('');
-  const [number, setNumber] = useState('');
+  const [otp, setOtp] = useState("");
+  const [number, setNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
   const [verified, setVerified] = useState(null);
@@ -29,13 +30,13 @@ function App() {
   function onCaptchVerify() {
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
-        'recaptcha-container',
+        "recaptcha-container",
         {
-          size: 'invisible',
+          size: "invisible",
           callback: (response) => {
             onSignup();
           },
-          'expired-callback': () => {},
+          "expired-callback": () => {},
         },
         auth
       );
@@ -48,14 +49,14 @@ function App() {
 
     const appVerifier = window.recaptchaVerifier;
 
-    const formatNumber = '+' + number;
+    const formatPh = "+" + number;
 
-    signInWithPhoneNumber(auth, formatNumber, appVerifier)
+    signInWithPhoneNumber(auth, formatPh, appVerifier)
       .then((confirmationResult) => {
         window.confirmationResult = confirmationResult;
         setLoading(false);
         setShowOTP(true);
-        toast.success('OTP sended successfully!');
+        toast.success("OTP sended successfully!");
       })
       .catch((error) => {
         console.log(error);
@@ -69,7 +70,7 @@ function App() {
       .confirm(otp)
       .then(async (res) => {
         console.log(res);
-        setVerified(res.verified);
+        setVerified(res.user);
         setLoading(false);
       })
       .catch((err) => {
@@ -151,7 +152,7 @@ function App() {
                   </label>
                   <PhoneInput
                     className="drop"
-                    country={'in'}
+                    country={"in"}
                     value={number}
                     onChange={setNumber}
                   />
